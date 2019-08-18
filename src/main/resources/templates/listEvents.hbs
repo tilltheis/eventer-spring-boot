@@ -1,0 +1,14 @@
+{{#> layout }}
+  {{#if status}}<div>{{status}}</div>{{/if}}
+  <a href="create">Create New Event</a>
+  {{#if events}}
+    <table>
+      <tr><td></td><th>Title</th><th>Host</th><th>Date</th><th>Guests</th><th>Description</th></tr>
+    {{#each events}}
+      <tr><td><a href="/events/{{id}}">✎</a></td><td>{{title}}</td><td>{{host.name}}</td><td>{{dateTime}}</td><td>{{guestListPreview guests}}</td><td>{{description}}</td></tr>
+    {{/each}}
+    </table>
+  {{else}}
+    <div>There are no Events.</caption>
+  {{/if}}
+{{/layout}}

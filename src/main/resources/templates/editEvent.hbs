@@ -1,0 +1,21 @@
+{{#> layout }}
+  <h2>Editing Event</h2>
+  <form method="post">
+    Name: <input name="title" value="{{event.title}}">
+    Guests: <select name="hostId">
+        <option disabled>Select Host</option>
+      {{#each users}}
+        <option value="{{id}}" {{#ifEquals id event.host.id}}selected{{/ifEquals}}>{{name}}</option>
+      {{/each}}
+    </select>
+    Date: <input name="date" type="date" value="{{formatDate event.dateTime}}" required>
+    Guests: <select name="guestIds[]" multiple>
+        <option disabled>Select Guests</option>
+      {{#each users}}
+        <option value="{{id}}" {{#ifContained this event.guests}}selected{{/ifContained}}>{{name}}</option>
+      {{/each}}
+    </select>
+    <textarea name="description">{{event.description}}</textarea>
+    <input type="submit" value="Update Event">
+  </form>
+{{/layout}}

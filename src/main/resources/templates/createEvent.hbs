@@ -1,0 +1,21 @@
+{{#> layout }}
+  <h2>Creating New Event</h2>
+  <form method="post">
+    Name: <input name="title">
+    Host: <select name="hostId">
+        <option disabled selected>Select Host</option>
+      {{#each users}}
+        <option value="{{id}}">{{name}}</option>
+      {{/each}}
+    </select>
+    Date: <input name="date" type="date" required>
+    Guests: <select name="guestIds[]" multiple>
+        <option disabled>Select Guests</option>
+      {{#each users}}
+        <option value="{{id}}">{{name}}</option>
+      {{/each}}
+    </select>
+    <textarea name="description"></textarea>
+    <input type="submit" value="Create Event">
+  </form>
+{{/layout}}
