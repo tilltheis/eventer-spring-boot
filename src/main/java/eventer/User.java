@@ -7,37 +7,40 @@ import java.util.UUID;
 @Entity
 @Table(name = "\"user\"")
 public class User {
-    @Id
-    @NotNull
-    private UUID id;
 
-    @NotNull
-    private String name;
+	@Id
+	@NotNull
+	private UUID id;
 
-    @NotNull
-    private String email;
+	@NotNull
+	private String name;
 
-    protected User() {}
+	@NotNull
+	private String email;
 
-    public User(@NotNull UUID id) {
-        this.id = id;
-    }
+	protected User() {
+	}
 
-    public User(@NotNull UUID id, @NotNull String name, @NotNull String email) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-    }
+	public User(@NotNull UUID id) {
+		this.id = id;
+	}
 
-    public UUID getId() {
-        return id;
-    }
+	public User(@NotNull UUID id, @NotNull String name, @NotNull String email) {
+		this.id = id;
+		this.name = name;
+		this.email = email;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public UUID getId() {
+		return id;
+	}
 
-    public String getEmail() {
-        return email;
-    }
+	public String getName() {
+		return name;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
 }

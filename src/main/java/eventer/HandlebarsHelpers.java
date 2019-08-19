@@ -10,26 +10,28 @@ import java.util.*;
 
 @HandlebarsHelper
 public class HandlebarsHelpers {
-    public static CharSequence guestListPreview(Set<User> guests) {
-        List<String> names = new ArrayList<>(guests.size());
-        for (User guest : guests) {
-            names.add(guest.getName());
-        }
-        Collections.sort(names);
-        return String.join(", ", names);
-    }
 
-    public static <A> CharSequence ifEquals(A x, A y, Options options) throws IOException {
-        return x == y ? options.fn(options.context) : options.inverse(options.context);
-    };
+	public static CharSequence guestListPreview(Set<User> guests) {
+		List<String> names = new ArrayList<>(guests.size());
+		for (User guest : guests) {
+			names.add(guest.getName());
+		}
+		Collections.sort(names);
+		return String.join(", ", names);
+	}
 
-    public static <A> CharSequence ifContained(A element, Collection<A> collection, Options options) throws IOException {
-        System.out.println("el = " + element + " xs = " + collection);
-        return collection.contains(element) ? options.fn(options.context) : options.inverse(options.context);
-    };
+	public static <A> CharSequence ifEquals(A x, A y, Options options) throws IOException {
+		System.out.println("x = " + x + " y = " + y);
+		return Objects.equals(x, y) ? options.fn(options.context) : options.inverse(options.context);
+	};
 
-    public static CharSequence formatDate(LocalDateTime dateTime) {
-        System.out.println("formatDate " + dateTime);
-        return dateTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd"));
-    }
+	public static <A> CharSequence ifContained(A element, Collection<A> collection, Options options)
+			throws IOException {
+		return collection.contains(element) ? options.fn(options.context) : options.inverse(options.context);
+	};
+
+	public static CharSequence formatDate(LocalDateTime dateTime) {
+		return dateTime.format(DateTimeFormatter.ofPattern("uuuu-MM-dd"));
+	}
+
 }

@@ -1,21 +1,62 @@
 {{#> layout }}
-  <h2>Editing Event</h2>
+  <h2>{{#ifEquals action "create"}}Creating{{else}}Updating{{/ifEquals}} Event</h2>
   <form method="post">
-    Name: <input name="title" value="{{event.title}}">
-    Guests: <select name="hostId">
-        <option disabled>Select Host</option>
-      {{#each users}}
-        <option value="{{id}}" {{#ifEquals id event.host.id}}selected{{/ifEquals}}>{{name}}</option>
-      {{/each}}
-    </select>
-    Date: <input name="date" type="date" value="{{formatDate event.dateTime}}" required>
-    Guests: <select name="guestIds[]" multiple>
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input class="form-control" id="title" name="title" value="{{event.title}}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="hostId">Host</label>
+      <select class="form-control" id="hostId" name="hostId" required>
+        <option disabled {{#ifEquals action "create"}}selected{{/ifEquals}}>Select Host</option>
+        {{#each users}}
+          <option value="{{id}}" {{#ifEquals id event.host.id}}selected{{/ifEquals}}>{{name}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="form-row align-items-center form-group">
+      <div class="col">
+        <label for="date">Date</label>
+        <input class="form-control" id="date" name="date" type="date" value="{{formatDate event.dateTime}}" required>
+      </div>
+
+      <div class="col">
+        <label for="time">Time</label>
+        <input class="form-control" id="time" name="time" type="time" value="">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="guestIds">Guests</label>
+      <select class="form-control" id="guestIds" name="guestIds[]" multiple>
         <option disabled>Select Guests</option>
-      {{#each users}}
-        <option value="{{id}}" {{#ifContained this event.guests}}selected{{/ifContained}}>{{name}}</option>
-      {{/each}}
-    </select>
-    <textarea name="description">{{event.description}}</textarea>
-    <input type="submit" value="Update Event">
+        {{#each users}}
+          <option value="{{id}}" {{#ifContained this event.guests}}selected{{/ifContained}}>{{name}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="form-row align-items-center form-group">
+      <div class="col">
+          <label for="guestName">External Guest Name</label>
+          <input class="form-control" id="guestName">
+      </div>
+      <div class="col">
+          <label for="guestEmail">External Guest Email</label>
+          <input class="form-control" id="guestEmail" type="email">
+      </div>
+      <div class="col">
+        <label>&nbsp;</label>
+        <button class="btn btn-outline-secondary form-control" id="addGuestEmail" onclick="var opt=document.createElement('option'),name=document.getElementById('guestName'),email=document.getElementById('guestEmail');if(name.value!=''&&email.value!=''&&email.checkValidity()){opt.innerText=name.value;opt.value=email.value;name.value=email.value='';opt.selected=true;document.getElementById('guestIds').appendChild(opt);}return false;">Add External Guest</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea class="form-control" id="description" name="description">{{event.description}}</textarea>
+    </div>
+    <input class="btn btn-primary" type="submit" value="{{#ifEquals action "create"}}Create{{else}}Update{{/ifEquals}} Event">
   </form>
 {{/layout}}
