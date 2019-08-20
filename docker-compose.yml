@@ -8,6 +8,6 @@ services:
     environment:
       POSTGRES_USER: eventer
       POSTGRES_DB: eventer
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: eventer
     ports:
       - "5432:5432"
