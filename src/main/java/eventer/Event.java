@@ -3,6 +3,7 @@ package eventer;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,10 +32,6 @@ public class Event {
 	private LocalDateTime dateTime;
 
 	protected Event() {
-	}
-
-	public Event(@NotNull UUID id) {
-		this.id = id;
 	}
 
 	public Event(@NotNull UUID id, @NotNull String title, @NotNull String description, @NotNull User host,
@@ -69,6 +66,29 @@ public class Event {
 
 	public LocalDateTime getDateTime() {
 		return dateTime;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Event event = (Event) o;
+		return Objects.equals(id, event.id) && Objects.equals(title, event.title)
+				&& Objects.equals(description, event.description) && Objects.equals(host, event.host)
+				&& Objects.equals(guests, event.guests) && Objects.equals(dateTime, event.dateTime);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, title, description, host, guests, dateTime);
+	}
+
+	@Override
+	public String toString() {
+		return "Event{" + "id=" + id + ", title='" + title + '\'' + ", description='" + description + '\'' + ", host="
+				+ host + ", guests=" + guests + ", dateTime=" + dateTime + '}';
 	}
 
 }

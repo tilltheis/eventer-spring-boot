@@ -1,9 +1,11 @@
 package eventer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.mail.MailSender;
 
 @SpringBootApplication
 public class Application {
@@ -13,11 +15,22 @@ public class Application {
 	}
 
 	@Autowired
-	EventRepository eventRepository;
+	private EventRepository eventRepository;
+
+	@Autowired
+	private UserRepository userRepository;
+
+	@Autowired
+	private MailSender mailSender;
 
 	@Bean
-	public EventService eventService() {
-		return new EventService(eventRepository);
+	public EmailService emailService(@Value("${eventer.send-emails}") boolean sendEmails) {
+		return new EmailService(mailSender, sendEmails);
+	}
+
+	@Bean
+	public EventService eventService(EmailService emailService) {
+		return new EventService(eventRepository, userRepository, emailService);
 	}
 
 }

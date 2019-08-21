@@ -18,13 +18,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
-public class EventController {
+public class EventController extends Logging {
 
 	private User tillUser = new User(UUID.fromString("32ec5ce0-5173-4a52-8fc8-62356bd26cc5"), "Till",
-			"example@example.org");
+			"example@example.org", true);
 
 	private User janniUser = new User(UUID.fromString("fae95a3e-7e9c-4bcc-8903-87305b055bfe"), "Janni",
-			"example@example.org");
+			"example@example.org", true);
 
 	@Autowired
 	private EventRepository eventRepository;
@@ -73,32 +73,36 @@ public class EventController {
 			@RequestParam String description, @RequestParam UUID hostId,
 			@RequestParam(value = "guestIds[]", required = false) String[] guestIds, @RequestParam String date,
 			RedirectAttributes redirectAttributes) {
-		UUID parsedId = id.equals("new") ? UUID.randomUUID() : UUID.fromString(id);
-		User host = new User(hostId);
-		Set<User> guests = new HashSet<>();
+		Optional<UUID> maybeId = id.equals("new") ? Optional.empty() : Optional.of(UUID.fromString(id));
+		Set<UUID> internalGuestIds = new HashSet<>();
+		Set<CreateOrUpdateEventRequest.ExternalGuest> externalGuests = new HashSet<>();
 		if (guestIds != null) {
 			for (String guestId : guestIds) {
-				User guest;
 				if (guestId.contains("@")) {
 					String[] emailLocalAndEmailDomainAndAndName = guestId.split("@", 3);
 					if (emailLocalAndEmailDomainAndAndName.length != 3) { // local-part@domain-part@guest-name
 						throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 					}
-					guest = new User(UUID.randomUUID(), emailLocalAndEmailDomainAndAndName[2],
-							emailLocalAndEmailDomainAndAndName[0] + '@' + emailLocalAndEmailDomainAndAndName[1]);
-					userRepository.save(guest);
+					externalGuests.add(new CreateOrUpdateEventRequest.ExternalGuest(
+							emailLocalAndEmailDomainAndAndName[2],
+							emailLocalAndEmailDomainAndAndName[0] + '@' + emailLocalAndEmailDomainAndAndName[1]));
 				}
 				else {
-					guest = new User(UUID.fromString(guestId));
+					internalGuestIds.add(UUID.fromString(guestId));
 				}
-				guests.add(guest);
 			}
 		}
 		LocalDate parsedLocalDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("uuuu-MM-dd"));
 		LocalDateTime parsedDateTime = parsedLocalDate.atStartOfDay();
-		Event event = new Event(parsedId, title, description, host, guests, parsedDateTime);
 
-		eventService.create(event);
+		try {
+			eventService.createOrUpdate(new CreateOrUpdateEventRequest(maybeId, title, description, hostId,
+					internalGuestIds, externalGuests, parsedDateTime));
+		}
+		catch (IllegalRequestException e) {
+			logger.error("Could not create or update event.", e);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+		}
 
 		redirectAttributes.addFlashAttribute("status",
 				id.equals("new") ? "Event has been created." : "Event has been updated.");
