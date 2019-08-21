@@ -32,6 +32,9 @@ public class EventController {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private EventService eventService;
+
 	@GetMapping("/")
 	public String index(Model model) {
 		seedDatabaseIfNeeded();
@@ -68,22 +71,38 @@ public class EventController {
 	@PostMapping("/events/{id}")
 	public ModelAndView doCreateOrEdit(@PathVariable("id") String id, @RequestParam String title,
 			@RequestParam String description, @RequestParam UUID hostId,
-			@RequestParam(value = "guestIds[]", required = false) UUID[] guestIds, @RequestParam String date,
+			@RequestParam(value = "guestIds[]", required = false) String[] guestIds, @RequestParam String date,
 			RedirectAttributes redirectAttributes) {
 		UUID parsedId = id.equals("new") ? UUID.randomUUID() : UUID.fromString(id);
 		User host = new User(hostId);
 		Set<User> guests = new HashSet<>();
 		if (guestIds != null) {
-			for (UUID guestId : guestIds) {
-				guests.add(new User(guestId));
+			for (String guestId : guestIds) {
+				User guest;
+				if (guestId.contains("@")) {
+					String[] emailLocalAndEmailDomainAndAndName = guestId.split("@", 3);
+					if (emailLocalAndEmailDomainAndAndName.length != 3) { // local-part@domain-part@guest-name
+						throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+					}
+					guest = new User(UUID.randomUUID(), emailLocalAndEmailDomainAndAndName[2],
+							emailLocalAndEmailDomainAndAndName[0] + '@' + emailLocalAndEmailDomainAndAndName[1]);
+					userRepository.save(guest);
+				}
+				else {
+					guest = new User(UUID.fromString(guestId));
+				}
+				guests.add(guest);
 			}
 		}
 		LocalDate parsedLocalDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("uuuu-MM-dd"));
 		LocalDateTime parsedDateTime = parsedLocalDate.atStartOfDay();
 		Event event = new Event(parsedId, title, description, host, guests, parsedDateTime);
-		eventRepository.save(event);
-		String flashMessage = id.equals("new") ? "Event has been created." : "Event has been updated.";
-		redirectAttributes.addFlashAttribute("status", flashMessage);
+
+		eventService.create(event);
+
+		redirectAttributes.addFlashAttribute("status",
+				id.equals("new") ? "Event has been created." : "Event has been updated.");
+
 		return new ModelAndView("redirect:/");
 	}
 

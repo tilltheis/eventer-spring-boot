@@ -21,7 +21,6 @@ public class HandlebarsHelpers {
 	}
 
 	public static <A> CharSequence ifEquals(A x, A y, Options options) throws IOException {
-		System.out.println("x = " + x + " y = " + y);
 		return Objects.equals(x, y) ? options.fn(options.context) : options.inverse(options.context);
 	};
 

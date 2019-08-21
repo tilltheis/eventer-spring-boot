@@ -49,7 +49,7 @@
       </div>
       <div class="col">
         <label>&nbsp;</label>
-        <button class="btn btn-outline-secondary form-control" id="addGuestEmail" onclick="var opt=document.createElement('option'),name=document.getElementById('guestName'),email=document.getElementById('guestEmail');if(name.value!=''&&email.value!=''&&email.checkValidity()){opt.innerText=name.value;opt.value=email.value;name.value=email.value='';opt.selected=true;document.getElementById('guestIds').appendChild(opt);}return false;">Add External Guest</button>
+        <button class="btn btn-outline-secondary form-control" id="addGuestEmail" onclick="var opt=document.createElement('option'),name=document.getElementById('guestName'),email=document.getElementById('guestEmail');if(name.value!=''&&email.value!=''&&email.checkValidity()){opt.innerText=name.value;opt.value=email.value+'@'+name.value;name.value=email.value='';opt.selected=true;document.getElementById('guestIds').appendChild(opt);}return false;">Add External Guest</button>
       </div>
     </div>
 
