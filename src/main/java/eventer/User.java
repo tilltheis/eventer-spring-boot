@@ -19,17 +19,16 @@ public class User {
 	@NotNull
 	private String email;
 
-	@NotNull
-	private boolean registered;
+	private String passwordHash;
 
 	protected User() {
 	}
 
-	public User(@NotNull UUID id, @NotNull String name, @NotNull String email, @NotNull boolean registered) {
+	public User(@NotNull UUID id, @NotNull String name, @NotNull String email, @NotNull String passwordHash) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
-		this.registered = registered;
+		this.passwordHash = passwordHash;
 	}
 
 	public UUID getId() {
@@ -44,8 +43,12 @@ public class User {
 		return email;
 	}
 
+	public String getPasswordHash() {
+		return passwordHash;
+	}
+
 	public boolean isRegistered() {
-		return registered;
+		return passwordHash == null;
 	}
 
 	@Override
@@ -56,18 +59,18 @@ public class User {
 			return false;
 		User user = (User) o;
 		return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.equals(email, user.email)
-				&& Objects.equals(registered, user.registered);
+				&& Objects.equals(passwordHash, user.passwordHash);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(id, name, email, registered);
+		return Objects.hash(id, name, email, passwordHash);
 	}
 
 	@Override
 	public String toString() {
-		return "User{" + "id=" + id + ", name='" + name + '\'' + ", email='" + email + '\'' + ", registered='"
-				+ registered + '\'' + '}';
+		return "User{" + "id=" + id + ", name='" + name + '\'' + ", email='" + email + '\'' + ", passwordHash='"
+				+ passwordHash + '\'' + '}';
 	}
 
 }

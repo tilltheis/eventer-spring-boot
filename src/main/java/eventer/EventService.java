@@ -39,7 +39,7 @@ public class EventService extends Logging {
 		}
 		Set<User> externalGuests = new HashSet<>();
 		for (CreateOrUpdateEventRequest.ExternalGuest guest : request.externalGuests) {
-			externalGuests.add(new User(UUID.randomUUID(), guest.name, guest.email, false));
+			externalGuests.add(new User(UUID.randomUUID(), guest.name, guest.email, null));
 		}
 		userRepository.saveAll(externalGuests);
 		guests.addAll(externalGuests);

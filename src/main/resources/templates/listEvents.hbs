@@ -1,4 +1,11 @@
 {{#> layout }}
+  <p>
+    {{#if userName }}
+        Logged in as {{userName}}. <a href="/logout">Logout…</a>
+    {{else}}
+        <a href="/login">Login…</a>
+    {{/if}}
+  </p>
   {{#if status}}<div>{{status}}</div>{{/if}}
   <a href="/events/new">Create New Event</a>
   {{#if events}}

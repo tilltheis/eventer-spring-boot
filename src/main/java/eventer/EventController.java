@@ -2,6 +2,7 @@ package eventer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,11 +22,13 @@ import java.util.*;
 @Controller
 public class EventController extends Logging {
 
+	// password = "password"
 	private User tillUser = new User(UUID.fromString("32ec5ce0-5173-4a52-8fc8-62356bd26cc5"), "Till",
-			"example@example.org", true);
+			"till@example.org", "$2a$10$d.vQEHwPIqtSYWQOMtg7LuZgTOx1R/2sOLnqCUkpixkXJ1paUhEIm");
 
+	// password = "password"
 	private User janniUser = new User(UUID.fromString("fae95a3e-7e9c-4bcc-8903-87305b055bfe"), "Janni",
-			"example@example.org", true);
+			"janni@example.org", "$2a$10$d.vQEHwPIqtSYWQOMtg7LuZgTOx1R/2sOLnqCUkpixkXJ1paUhEIm");
 
 	@Autowired
 	private EventRepository eventRepository;
@@ -36,9 +40,12 @@ public class EventController extends Logging {
 	private EventService eventService;
 
 	@GetMapping("/")
-	public String index(Model model) {
+	public String index(Model model, Principal principal) {
 		seedDatabaseIfNeeded();
 
+		if (principal != null) {
+			model.addAttribute("userName", principal.getName());
+		}
 		model.addAttribute("events", eventRepository.findAllByOrderByDateTimeAsc());
 		return "listEvents";
 	}
